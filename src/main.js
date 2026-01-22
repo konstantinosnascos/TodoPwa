@@ -3,8 +3,7 @@ import {
     getTodos,
     createTodo as apiCreateTodo,
     updateTodo as apiUpdateTodo,
-    deleteTodo as apiDeleteTodo,
-    updateTodo
+    deleteTodo as apiDeleteTodo
 } from './api.js'
 
 let isOnline = navigator.onLine;
@@ -134,13 +133,22 @@ async function deleteTodo(id) {
 }
 
 async function toggleTodo(id) {
+    console.log("=== toggleTodo startad ===");
+    console.log("id:", id);
+    console.log("isOnline:", isOnline);
+
     if (!isOnline) {
         console.log("Kan inte uppdatera offline");
         return;
     }
 
-    const todo = TodoTasks.find(t=> t.id === id);
-    if (!todo) return;
+    const todo = TodoTasks.find(t => t.id === id);
+    console.log("Hittad todo:", todo);
+
+    if (!todo) {
+        console.log("Ingen todo hittades!");
+        return;
+    }
 
     const oldCompleted = todo.completed;
 
@@ -148,22 +156,22 @@ async function toggleTodo(id) {
         todo.completed = !todo.completed;
         renderTodos();
 
-        // Skicka uppdateringen till backend
-        const updatedTodo = await updateTodo(id, {completed: todo.completed});
+        const updatedTodo = await apiUpdateTodo(id, { completed: todo.completed });
 
-        // Uppdatera med data från backend (för säkerhets skull)
+        console.log("Svar från API:", updatedTodo);
+
+        // Merga istället för att ersätta helt
         const todoIndex = TodoTasks.findIndex(t => t.id === id);
-        TodoTasks[todoIndex] = updatedTodo;
+        TodoTasks[todoIndex] = { ...TodoTasks[todoIndex], ...updatedTodo };
+        // Behåller title, dueDate etc. och uppdaterar bara det som kom från API
 
-        console.log('Toggled:', updatedTodo.title, '→', updatedTodo.completed);
+        console.log("Uppdaterad todo i array:", TodoTasks[todoIndex]);
+        console.log("=== toggleTodo klar ===");
 
     } catch (error) {
-        console.error('Kunde inte uppdatera todo:', error);
-
-        // Återställ till det gamla värdet
+        console.error("FEL i toggleTodo:", error);
         todo.completed = oldCompleted;
         renderTodos();
-
         alert('Kunde inte uppdatera todo. Kontrollera att servern körs.');
     }
 }
