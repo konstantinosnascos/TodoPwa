@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "json-server": "^0.17.4",
     "vite": "npm:rolldown-vite@7.2.5",
     "vite-plugin-pwa": "^1.2.0"
   },

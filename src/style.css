@@ -239,6 +239,50 @@ body.offline .todo-item {
     font-weight: 500;
 }
 
+#error-banner {
+    background: #f44336;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Ta bort pulsen när backend är tillbaka */
+body:not(.backend-unavailable) #error-banner {
+    animation: none;
+}
+
+/* Styling när backend är otillgänglig */
+body.backend-unavailable input,
+body.backend-unavailable button,
+body.backend-unavailable .todo-checkbox {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+body.backend-unavailable .todo-item {
+    opacity: 0.7;
+}
+
+/* Grön "success" färg när backend kommer tillbaka */
+#error-banner.success {
+    background: #4CAF50;
+    animation: none;
+}
+
+body.backend-unavailable .todo-item {
+    opacity: 0.7;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     #task-form {
